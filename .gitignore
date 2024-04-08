@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 configuration.properties
+cloudfunction.json
+demo.py
