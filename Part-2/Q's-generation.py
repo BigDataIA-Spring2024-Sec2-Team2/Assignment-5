@@ -20,7 +20,7 @@ def process_text_files_and_generate_analysis(text_files, output_file):
         with open(file_path, 'r') as file:
             sample_questions += file.read()
 
-    prompt = f"Here are few sample questions:\n{sample_questions[:16385]}\n\n. Perform detailed analysis on the format, question creation and how the Answers and explaination are given. Also mention few generalized examples in them."
+    prompt = f"Here are few sample questions:\n{sample_questions[:16385]}\n\n. Perform detailed analysis on the format, question creation and how the Answers and explanation are given. Also mention few generalized examples in them."
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo-0125",
@@ -47,8 +47,8 @@ def generate_questions_from_mongo(mongo_summary, combined_analysis, num_question
     {mongo_summary}
     
     
-    Ensure that each question had for options and solutions provide thorough explanations for why a particular choice is correct and list explaination why each other answer choices are incorrect. 
-    Each generated question should be numbered and have four following sections,--> Question Number:, --> Question: , --> Option:, --> Explaination:
+    Ensure that each question had for options and solutions provide thorough explanation for why a particular choice is correct and list explanation why each other answer choices are incorrect. 
+    Each generated question should be numbered and have four following sections,--> Question Number:, --> Question: , --> Option:, --> Explanation:
     Add *--------------* between each generated questions with all sections of one question together.
     """
 
@@ -99,10 +99,12 @@ def store_generated_questions_in_mongo(generated_questions, generated_questions_
     # print(generated_questions.split("\n\n")[0])
     for question_with_solution in generated_questions.split("*--------------*"):
         
-        
 
-        if "Explanation" in question_with_solution:
-            question, solution = question_with_solution.split("Explanation:")
+        if "explanation" in question_with_solution.lower():
+            solution_set = question_with_solution.split("Explanation:")
+            
+            question = solution_set[0]
+            solution = "".join(solution_set[1:])
             
             question = question.replace("Question Number: ","").replace("Question: ","").replace("Option:","Options:")
             
@@ -119,124 +121,15 @@ def store_generated_questions_in_mongo(generated_questions, generated_questions_
             #     whole_answer = "Not available"
 
             generated_questions_collection.insert_one({
-                "question": question.strip(),
+                "question": question.strip().replace("-->",""),
                 # "correct_answer": correct_answer.strip(),
-                "answer": solution.strip()
+                "answer": solution.strip().replace("-->","")
             })
         else:
-            print("Warning: 'Solution:' not found in question_with_solution.")
+            print(question_with_solution.lower())
+            print("Warning: 'explanation:' not found in question_with_solution.")
             
-            
-
-# if __name__ == "__main__":
-#     output_file = 'analysis.txt' 
-
-#     text_files = ["parsed-text-files/sample-level-i-questions1_1.txt", "parsed-text-files/sample-level-i-questions2_1.txt", "parsed-text-files/sample-level-i-questions3_1.txt"]
-
-#     if os.path.exists(output_file):
-#         with open(output_file,'r') as f:
-#             combined_analysis = f.read()
-#     else:
-#         combined_analysis = process_text_files_and_generate_analysis(text_files, output_file)
-
-
-#     summaries = collection.find(
-#         {"NameOfTheTopic": {"$in": ["Introduction to Linear Regression", "Sampling and Estimation", "Hypothesis Testing"]}},
-#         {"Summary": 1, "_id": 0}
-#     )
-    
-#     # print([summary["Summary"] for summary in summaries])
-#     mongo_summary =  "\n\n".join([summary["Summary"] if summary["Summary"] is not None else "" for summary in summaries])
-
-#     SetA = generate_questions_from_mongo(mongo_summary, combined_analysis, num_questions=50,max_single_prompt=5)
-    
-#     with open("SetA.txt", 'w', encoding="utf-8") as output:
-#         output.write(SetA)
-
-
-#     if "SetA" in db.list_collection_names():
-#         generated_questions_collection = db["SetA"]
-#     else:
-#         generated_questions_collection = db.create_collection("SetA")
-#     store_generated_questions_in_mongo(SetA, generated_questions_collection)
-
-
-
-# if __name__ == "__main__":
-#     output_file = 'analysis.txt' 
-#     text_files = ["parsed-text-files/sample-level-i-questions1_1.txt", "parsed-text-files/sample-level-i-questions2_1.txt", "parsed-text-files/sample-level-i-questions3_1.txt"]
-
-#     if os.path.exists(output_file):
-#         with open(output_file, 'r') as f:
-#             combined_analysis = f.read()
-#     else:
-#         combined_analysis = process_text_files_and_generate_analysis(text_files, output_file)
-
-#     summaries = collection.find(
-#         {"NameOfTheTopic": {"$in": ["Introduction to Linear Regression", "Sampling and Estimation", "Hypothesis Testing"]}},
-#         {"Summary": 1, "_id": 0}
-#     )
-    
-#     mongo_summary = "\n\n".join([summary["Summary"] if summary["Summary"] is not None else "" for summary in summaries])
-
-#     if "SetA" not in db.list_collection_names():
-#         SetA = generate_questions_from_mongo(mongo_summary, combined_analysis, num_questions=50, max_single_prompt=5)
-#         with open("SetA.txt", 'w', encoding="utf-8") as output:
-#             output.write(SetA)
-#         generated_questions_collection = db.create_collection("SetA")
-#         store_generated_questions_in_mongo(SetA, generated_questions_collection)
-#     else:
-#         print("SetA already exists")
-
-#     if "SetB" not in db.list_collection_names():
-#         SetB = generate_questions_from_mongo(mongo_summary, combined_analysis, num_questions=50, max_single_prompt=5)
-#         with open("SetB.txt", 'w', encoding="utf-8") as output:
-#             output.write(SetB)
-#         generated_questions_collection = db.create_collection("SetB")
-#         store_generated_questions_in_mongo(SetB, generated_questions_collection)
-#     else:
-#         print("SetB already exists")
-
-
-# if __name__ == "__main__":
-#     output_file = 'analysis.txt' 
-#     text_files = ["parsed-text-files/sample-level-i-questions1_1.txt", "parsed-text-files/sample-level-i-questions2_1.txt", "parsed-text-files/sample-level-i-questions3_1.txt"]
-
-#     if os.path.exists(output_file):
-#         with open(output_file, 'r') as f:
-#             combined_analysis = f.read()
-#     else:
-#         combined_analysis = process_text_files_and_generate_analysis(text_files, output_file)
-
-#     summaries = collection.find(
-#         {"NameOfTheTopic": {"$in": ["Introduction to Linear Regression", "Sampling and Estimation", "Hypothesis Testing"]}},
-#         {"Summary": 1, "_id": 0}
-#     )
-    
-#     mongo_summary = "\n\n".join([summary["Summary"] if summary["Summary"] is not None else "" for summary in summaries])
-
-#     if "SetA" not in db.list_collection_names():
-#         SetA = generate_questions_from_mongo(mongo_summary, combined_analysis, num_questions=50, max_single_prompt=5)
-#         with open("SetA.txt", 'w', encoding="utf-8") as output:
-#             output.write(SetA)
-#         generated_questions_collection = db.create_collection("SetA")
-#         store_generated_questions_in_mongo(SetA, generated_questions_collection)
-#     else:
-#         print("SetA already exists")
-
-
-
-#     if "SetB" not in db.list_collection_names():
-#         SetB_prompt = f"This is SetB. Following is the analysis of historical questions:\n{combined_analysis}. \n\n Refer this and generate 50 new questions and their solutions strictly as per {combined_analysis} based on following topic - \n {mongo_summary}"
-#         SetB = generate_questions_from_mongo(mongo_summary, SetB_prompt, num_questions=50, max_single_prompt=5)
-#         with open("SetB.txt", 'w', encoding="utf-8") as output:
-#             output.write(SetB)
-#         generated_questions_collection = db.create_collection("SetB")
-#         store_generated_questions_in_mongo(SetB, generated_questions_collection)
-#     else:
-#         print("SetB already exists")
-
-
+        
 
 
 if __name__ == "__main__":
@@ -257,13 +150,11 @@ if __name__ == "__main__":
     mongo_summary = "\n\n".join([summary["Summary"] if summary["Summary"] is not None else "" for summary in summaries])
 
 
-
-    
     SetACollection = db[config['mongodb']['SET_A_COLLECTION_NAME']]
     SetBCollection = db[config['mongodb']['SET_B_COLLECTION_NAME']]
     
     # Generate and store SetA if it doesn't exist
-    if config.SET_A_COLLECTION_NAME not in db.list_collection_names():
+    if config['mongodb']['SET_A_COLLECTION_NAME'] not in db.list_collection_names():
         SetA = generate_questions_from_mongo(mongo_summary, combined_analysis, num_questions=50, max_single_prompt=5)
         with open("SetA.txt", 'w', encoding="utf-8") as output:
             output.write(SetA)
@@ -272,11 +163,22 @@ if __name__ == "__main__":
         print("SetA already exists")
 
     # Generate and store SetB if it doesn't exist
-    if config.SET_B_COLLECTION_NAME not in db.list_collection_names():
-        SetB_prompt = f"This is SetB. Following is the analysis of historical questions:\n{combined_analysis}. \n\n Refer this and generate 50 new questions and their solutions strictly as per {combined_analysis} based on following topic - \n {mongo_summary}"
-        SetB = generate_questions_from_mongo(mongo_summary, SetB_prompt, num_questions=50, max_single_prompt=5)
+    if config['mongodb']['SET_B_COLLECTION_NAME'] not in db.list_collection_names():
+        # SetB_prompt = f"This is SetB. Following is the analysis of historical questions:\n{combined_analysis}. \n\n Refer this and generate 50 new questions and their solutions strictly as per {combined_analysis} based on following topic - \n {mongo_summary}"
+        SetB = generate_questions_from_mongo(mongo_summary, combined_analysis, num_questions=50, max_single_prompt=5)
         with open("SetB.txt", 'w', encoding="utf-8") as output:
             output.write(SetB)
         store_generated_questions_in_mongo(SetB, SetBCollection)
     else:
         print("SetB already exists")
+
+
+# SetBCollection = db[config['mongodb']['SET_B_COLLECTION_NAME']]
+# with open("SetB.txt", 'r', encoding="utf-8") as output:
+#     SetB = output.read()
+    
+#     # print(len(SetB.split("*--------------*")))
+    
+#     # print(SetB.split("*--------------*")[2])
+    
+#     store_generated_questions_in_mongo(SetB, SetBCollection)

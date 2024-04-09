@@ -160,3 +160,5 @@ cython_debug/
 #.idea/
 
 configuration.properties
+env
+configuration.properties
