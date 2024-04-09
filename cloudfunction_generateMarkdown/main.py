@@ -92,5 +92,5 @@ def generateMarkdown(request):
             source_collection.update_one({"_id": mongoId}, {"$set": {"LearningSummaryMarkdowns": markdown_id_list, "Status": True}})
 
         return "Success"
-    except:
+    except Exception as e:
         return "Fail"
