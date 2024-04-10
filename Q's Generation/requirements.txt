@@ -1,0 +1,6 @@
+pymongo
+PyPDF2
+openai
+google-api-python-client
+google-cloud-storage
+functions-framework==3.*
