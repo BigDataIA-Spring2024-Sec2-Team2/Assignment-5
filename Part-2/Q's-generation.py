@@ -16,7 +16,7 @@ db = mongo_client[config['mongodb']['DATABASE_NAME']]
 collection = db[config['mongodb']['COLLECTION_NAME']]
 
 
-PATH = os.path.join(os.getcwd() , ' ')
+PATH = os.path.join(os.getcwd() , 'assignment-5-419501-a5d63f5d9476.json')
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = PATH
 
 # Initialize the Google Cloud Storage client

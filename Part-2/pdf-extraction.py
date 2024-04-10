@@ -46,10 +46,6 @@ for idx, pdf_file in enumerate(pdf_files):
 
     for i, section in enumerate(sections[1:]): 
         section = section.strip()  
-    
-        # text_file_path = os.path.join(output_directory, f'{text_file_name}_{i + 1}.txt')
-        # with open(text_file_path, 'w') as text_file:
-        #     text_file.write(section)
         
         file_name = f'{output_directory}{text_file_name}.txt'
         print(file_name)
