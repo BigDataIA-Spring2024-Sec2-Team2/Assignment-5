@@ -29,12 +29,14 @@ def generate_questions(request):
         storage_client = storage.Client()
         
         def gcp_store_from_string(string_data, file_name):
-            bucket = storage_client.get_bucket('assignment5-group2')
+            # bucket = storage_client.get_bucket('bucket_name')
+            bucket = os.environ.get('bucket')
             blob = bucket.blob(file_name)
             blob.upload_from_string(string_data)
 
         def gcp_read_string(file_name):
-            bucket = storage_client.get_bucket('assignment5-group2')
+            # bucket = storage_client.get_bucket('bucket_name')
+            bucket = os.environ.get('bucket')
             blob = bucket.blob(file_name)
             return str(blob.download_as_string())
 

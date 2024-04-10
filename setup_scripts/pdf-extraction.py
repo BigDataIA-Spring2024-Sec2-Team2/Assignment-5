@@ -5,8 +5,8 @@ import io
 
 from google.cloud import storage
 
-
-PATH = os.path.join(os.getcwd() , 'assignment-5-419501-a5d63f5d9476.json')
+PATH = os.environ.get('gcp_PATH') 
+# PATH = os.path.join(os.getcwd() , 'GCP bucket key file_path') 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = PATH
 
 # Initialize the Google Cloud Storage client
@@ -51,4 +51,3 @@ for idx, pdf_file in enumerate(pdf_files):
         print(file_name)
             
         gcp_store_from_string(section, file_name)
-
