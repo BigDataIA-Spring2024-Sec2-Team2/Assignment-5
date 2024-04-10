@@ -160,5 +160,8 @@ cython_debug/
 #.idea/
 
 configuration.properties
+env
+configuration.properties
+assignment-5-419501-a5d63f5d9476.json
 cloudfunction.json
 demo.py
