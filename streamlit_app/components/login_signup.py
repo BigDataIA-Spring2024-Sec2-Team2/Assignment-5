@@ -3,10 +3,14 @@ import requests
 import json
 import re
 from streamlit_option_menu import option_menu
+import configparser
+
+config = configparser.ConfigParser()
+config.read('./configuration.properties')
+base_url = config['APIs']['base_url_auth']
 
 def menu_login():
     ''' navigation menu for login/signup '''
-    # st.session_state["login_menu"] = "Login"
     login_menu = option_menu(None, ["Login", "Sign Up"], 
         icons=['person-fill', "person-plus-fill"], 
         menu_icon="cast", 
@@ -34,28 +38,25 @@ def sign_up():
 
     if sub:
       if validate_email_signup(email) and validate_username_signup(username) and validate_password_signup(password1, password2):
-        # url = 'http://34.23.189.28:8080/api/auth/register'
-        # # Data to be sent with the POST request (as a dictionary)
-        # payload = {
-        #   "email": email,
-        #   "password": password1,
-        #   "role":"user",
-        #   "name": username,
-        #   "passwordConfirm": password2
-        # }
-        # # Convert the data dictionary to JSON
-        # json_data = json.dumps(payload)
-        # # Making the POST request
-        # headers = {
-        #   'Content-Type': 'application/json',  # Example header, adjust as needed
-        # }
-        # response = requests.post(url, headers=headers, data=json_data)
-        # print(response.status_code)
-        # if response.status_code == 201:
-        #   st.success("User Registered!")
-        # else: 
-        #   st.error("Error Try Again")
-        pass
+        url = base_url + '/signup'
+        # Data to be sent with the POST request (as a dictionary)
+        payload = {
+          "email": email,
+          "password": password1,
+          "username": username,
+        }
+        # Convert the data dictionary to JSON
+        json_data = json.dumps(payload)
+        # Making the POST request
+        headers = {
+          'Content-Type': 'application/json',  # Example header, adjust as needed
+        }
+        response = requests.post(url, headers=headers, data=json_data)
+
+        if response.status_code == 200:
+          st.success("User Registered!")
+        else: 
+          st.error("Error Try Again")
 
 def login():
   with st.form(key='login', clear_on_submit=True):
@@ -68,25 +69,27 @@ def login():
       
     if sub:
       if validate_username(username) and validate_password(password):
-        # url = 'http://34.23.189.28:8080/api/auth/login'
-        # # Data to be sent with the POST request (as a dictionary)
-        # payload = {'email': username, 'password': password}
-        # # Convert the data dictionary to JSON
-        # json_data = json.dumps(payload)
-        # # Making the POST request
-        # headers = {
-        #   'Content-Type': 'application/json',  # Example header, adjust as needed
-        # }
-        # response = requests.post(url, headers=headers, data=json_data)
-        # print(response.json()["status"])
-        # if response.status_code == 200:
-        #   st.session_state["auth_status"] = True
-        #   st.session_state["token"] = response.json()["access_token"]
-        #   st.rerun()
-        # else: 
-        #   st.error("Invalid Credential")
-        st.session_state["auth_status"] = True
-        st.rerun()
+        url = base_url + '/login'
+        # Data to be sent with the POST request (as a dictionary)
+        payload = {
+          'email': username, 
+          'password': password
+        }
+        # Convert the data dictionary to JSON
+        json_data = json.dumps(payload)
+        # Making the POST request
+        headers = {
+          'Content-Type': 'application/json',  # Example header, adjust as needed
+        }
+        response = requests.post(url, headers=headers, data=json_data)
+        if response.status_code == 200:
+          st.session_state["auth_status"] = True
+          st.session_state["username"] = username
+          st.session_state["access_token"] = response.json()["access_token"]
+          st.session_state["token_type"] = response.json()["token_type"]
+          st.rerun()
+        else: 
+          st.error("Invalid Credential")
 
 def validate_email_signup(email):
   # Regular expression for email validation
