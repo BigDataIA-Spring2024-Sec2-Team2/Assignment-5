@@ -18,11 +18,11 @@ def tabs():
 
   if st.session_state["nav_menu"] == "Collection" or st.session_state["nav_menu"] == None:
     data_collection()
-  elif st.session_state["nav_menu"] == "Question Generation":
+  elif st.session_state["nav_menu"] == "Question":
     st.write("2")
-  elif st.session_state["nav_menu"] == "Context Answer":
+  elif st.session_state["nav_menu"] == "Answer":
     st.write("3")
-  elif st.session_state["nav_menu"] == "Knowledge Answer":
+  elif st.session_state["nav_menu"] == "Knowledge":
     st.write("4")
   elif st.session_state["nav_menu"] == "Account":
     st.write("5")
