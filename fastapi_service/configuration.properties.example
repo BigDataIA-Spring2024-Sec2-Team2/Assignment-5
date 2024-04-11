@@ -7,3 +7,8 @@ mongo_url = <value>
 db_name = <value>
 collection_name = <value>
 collection_name_markdown = <value>
+
+[airflow]
+base_url_airflow = <value>
+password = <value>
+username = <value>

@@ -5,6 +5,8 @@ from pymongo import MongoClient
 import configparser
 import jwt
 from pydantic import BaseModel
+import random
+import requests
 
 router = APIRouter()
 
@@ -47,11 +49,11 @@ async def get_topic_list( authorization: str = Header(None)):
     client.close()
     return {"topics": records}
 
-class markdownTopic(BaseModel):
+class markdown_topic(BaseModel):
     topic: str
 
 @router.get('/markdown')
-async def get_markdown( payload: markdownTopic, authorization: str = Header(None)):
+async def get_markdown( payload: markdown_topic, authorization: str = Header(None)):
     ''' get markdown for topic '''
     if authorization is None:
         raise HTTPException(status_code=401, detail="Unauthorized")
@@ -76,3 +78,71 @@ async def get_markdown( payload: markdownTopic, authorization: str = Header(None
         learning_map[i["Learning"]] = i["LearningSummary"]
     client.close()
     return {"markdown": learning_map}
+
+@router.get('/new_topics')
+async def get_unloaded_topic_list( authorization: str = Header(None)):
+    ''' get new topic list '''
+    if authorization is None:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+    token = parts[1]
+    try:
+        token_decode = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM, ])
+        email: str = token_decode.get("sub")
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=401, detail="Token has expired")
+    # create client 
+    client = MongoClient(mongo_url)
+    db = client[db_name]
+    collection = db[collection_name_data]
+    query = {"Status": False}
+    cursor = collection.find(query)
+    records = {}
+    for i in cursor:
+        records[i["NameOfTheTopic"]] =  str(i["_id"])
+    client.close()
+    return {"topics": records}
+
+class airflow_trigger(BaseModel):
+    topicId: str
+
+@router.post('/triggre_markdown')
+async def triggre_markdown( payload: airflow_trigger, authorization: str = Header(None)):
+    ''' triggre markdown pipeline '''
+    if authorization is None:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        raise HTTPException(status_code=401, detail="Invalid authorization header")
+    token = parts[1]
+    try:
+        token_decode = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM, ])
+        email: str = token_decode.get("sub")
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=401, detail="Token has expired")
+    
+    base_url_ariflow = config['airflow']['base_url_airflow']
+    username = config['airflow']['username']
+    password = config['airflow']['password']
+    
+    rand1 = random.randint(1,1000)
+    rand2 = random.randint(1,1000)
+    dag_run_id = str("id_run_" +str(rand1)+str(rand2))
+    
+    url = base_url_ariflow + "/dags/dag_embedding/dagRuns"
+    
+    response = requests.post(
+        url,
+        auth=(username, password),
+        json={"conf": {"mongoId": payload.topicId}, "dag_run_id": dag_run_id},
+        headers={"Content-Type": "application/json"},
+    )
+    
+    if response.status_code == 200:
+        return {"message": "DAG triggered successfully"}
+    else:
+        return {"error": "Failed to trigger DAG"}

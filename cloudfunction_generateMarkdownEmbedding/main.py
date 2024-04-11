@@ -77,7 +77,7 @@ def generateMarkdownEmbedding(request):
             embedded_data.append(temp)
 
         index.upsert(embedded_data)
-        
+        mongo_client.close()
         return "Success" 
     except Exception as e:
         print(e)
