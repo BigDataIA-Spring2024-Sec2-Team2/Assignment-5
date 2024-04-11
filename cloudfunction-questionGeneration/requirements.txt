@@ -1,6 +1,12 @@
-pymongo
+# pymongo
 PyPDF2
-openai
+# openai
 google-api-python-client
-google-cloud-storage
+# google-cloud-storage
+# functions-framework==3.*
+
+
 functions-framework==3.*
+pymongo==4.6.3
+openai
+google-cloud-storage==2.16.0
