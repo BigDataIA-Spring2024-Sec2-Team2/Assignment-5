@@ -21,10 +21,6 @@ db_name = config['MongoDB']['db_name']
 collection_name = config['MongoDB']['collection_name']
 collection_name_markdown = config['MongoDB']['collection_name_markdown']
 
-# create client
-client = MongoClient(mongo_url)
-db = client[db_name]
-
 def call_generateMarkdown(topicId):
     audience = 'https://us-central1-assignment-5-419501.cloudfunctions.net/generate-markdown'
     TOKEN = google.oauth2.id_token.fetch_id_token(request, audience)
@@ -37,6 +33,9 @@ def call_generateMarkdown(topicId):
 
 def call_embeddingMarkdown(topicId):
     
+    # create client
+    client = MongoClient(mongo_url)
+    db = client[db_name]
     collection_data = db[collection_name]
     collection_markdown = db[collection_name_markdown]
     
@@ -59,6 +58,7 @@ def call_embeddingMarkdown(topicId):
         headers={'Authorization': f"Bearer {TOKEN}", "Content-Type": "application/json"},
         data=json.dumps({"mongoIds": mongoIds})
     )
+    client.close()
     return r.text
 
 dag = DAG(

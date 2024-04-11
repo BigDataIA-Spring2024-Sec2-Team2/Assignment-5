@@ -91,6 +91,7 @@ def generateMarkdown(request):
         if markdown_id_list:
             source_collection.update_one({"_id": mongoId}, {"$set": {"LearningSummaryMarkdowns": markdown_id_list, "Status": True}})
 
+        mongo_client.close()
         return "Success"
     except Exception as e:
         return "Fail"
