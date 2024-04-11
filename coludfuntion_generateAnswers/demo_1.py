@@ -7,24 +7,16 @@ import os
 
 def main(ids):
 
-  # embedding_model = os.environ.get('embedding_model') 
-  # key = os.environ.get('GPT_key') 
-  # mongo_url = os.environ.get('mongo_url') 
-  # db_name = os.environ.get('db_name') 
-  # collection_name_source = os.environ.get('collection_name_source') 
-  # key_pinecone = os.environ.get('key_pinecone') 
-  # index_name = os.environ.get('index_name')
-  # pinecone_question_namespace = os.environ.get('pinecone_question_namespace')
-  # pinecone_answers_namespace = os.environ.get('pinecone_answers_namespace')
-  
-  embedding_model = "text-embedding-3-small" 
-  key = "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"
-  mongo_url = "mongodb+srv://anshulchaudhary218:CiH1LUuWQM1Qh8Lh@cluster0.lvdodo0.mongodb.net/"
-  db_name = "assignment_5"
-  collection_name_source = "SetA" 
-  key_pinecone = "1b0334f4-f63c-4c7e-8c59-8d719e528a3a" 
-  index_name = "question-embed-db"
-  pinecone_question_namespace = "questions"
+  embedding_model = os.environ.get('embedding_model') 
+  key = os.environ.get('GPT_key') 
+  mongo_url = os.environ.get('mongo_url') 
+  db_name = os.environ.get('db_name') 
+  collection_name_source = os.environ.get('collection_name_source') 
+  key_pinecone = os.environ.get('key_pinecone') 
+  index_name = os.environ.get('index_name')
+  pinecone_question_namespace = os.environ.get('pinecone_question_namespace')
+  pinecone_answers_namespace = os.environ.get('pinecone_answers_namespace')
+
   
   try:
     #open AI
