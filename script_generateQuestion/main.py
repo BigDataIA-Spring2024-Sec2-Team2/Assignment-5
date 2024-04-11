@@ -1,9 +1,6 @@
 
 from google.cloud import storage
-import google.cloud.storage
-import json
 import os
-import sys
 import openai
 import pymongo
 import configparser
@@ -23,8 +20,6 @@ def initialize():
     storage_client = storage.Client()
 
     return config, db, collection, storage_client
-
-
 
 def gcp_store_from_string(storage_client,string_data, file_name):
     bucket = storage_client.get_bucket('bucket_name')
@@ -55,10 +50,8 @@ def generate_questions_from_mongo(mongo_summary, combined_analysis, collection_n
     if num_questions < max_single_prompt:
         max_single_prompt = num_questions       
     print("Total remaining Questions: ",num_questions,", Questions to be Generated in current run: ",max_single_prompt)
-   
     prompt = f"""Following is the analysis of historical questions: 
     {combined_analysis}
-  
     
     Refer the formatting of this analysis and strictly generate {max_single_prompt} new questions and provide their solutions on :
     {mongo_summary}
@@ -103,14 +96,14 @@ def generate_questions_from_mongo(mongo_summary, combined_analysis, collection_n
         if pushed==0:
             print(first)
         num_questions -= pushed
-         
+
     return final
 
 
 def store_generated_questions_in_mongo(generated_questions, generated_questions_collection):
     total = 0
     for question_with_solution in generated_questions.split("*--------------*"):
-              
+
         if "explanation" in question_with_solution.lower():
             solution_set = question_with_solution.split("Explanation:")
             
@@ -122,7 +115,7 @@ def store_generated_questions_in_mongo(generated_questions, generated_questions_
             generated_questions_collection.insert_one({
                 "question": question.strip().replace("-->",""),
                 "answer": solution.strip().replace("-->","")
-               
+
             })
             total +=1
         else:
@@ -152,20 +145,16 @@ def main():
 
     SetACollection = db[config['mongodb']['SET_A_COLLECTION_NAME']]
     SetBCollection = db[config['mongodb']['SET_B_COLLECTION_NAME']]
-    
 
     if config['mongodb']['SET_A_COLLECTION_NAME'] not in db.list_collection_names():
         generate_questions_from_mongo(mongo_summary, combined_analysis, SetACollection, storage_client, num_questions=50, max_single_prompt=50)
     else:
         print("SetA already exists")
-        
-
 
     if config['mongodb']['SET_B_COLLECTION_NAME'] not in db.list_collection_names():
         generate_questions_from_mongo(mongo_summary, combined_analysis, SetBCollection, storage_client, num_questions=50, max_single_prompt=50)
     else:
         print("SetB already exists")
-        
         
     for summary in summaries:
         if summary["Summary"] in used_topics:
@@ -173,8 +162,6 @@ def main():
                 {"Summary": summary["Summary"]},
                 {"$set": {"status": True}}
             )
-        
-        
 
 if __name__ == "__main__":
     main()
