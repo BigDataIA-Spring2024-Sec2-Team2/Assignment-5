@@ -2,10 +2,10 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 from components.data_collection import data_collection
 from components.question_data import questions
-
+from components.part3_report import part3report
 def tabs():
-  options = ["Collection", "Question", "Answer", "Knowledge"]
-  icons = ['cloud-upload-fill','clipboard-data-fill', 'gear-fill', 'person-fill', 'person-fill'] 
+  options = ["Collection", "Question", "Part3", "Part4"]
+  icons = ['cloud-upload-fill','gear-fill', 'clipboard-data-fill', 'clipboard-data-fill'] 
 
   login_menu = option_menu(None, options, 
     icons=icons, 
@@ -21,9 +21,7 @@ def tabs():
     data_collection()
   elif st.session_state["nav_menu"] == "Question":
     questions()
-  elif st.session_state["nav_menu"] == "Answer":
-    st.write("3")
-  elif st.session_state["nav_menu"] == "Knowledge":
+  elif st.session_state["nav_menu"] == "Part3":
+    part3report()
+  elif st.session_state["nav_menu"] == "Part4":
     st.write("4")
-  elif st.session_state["nav_menu"] == "Account":
-    st.write("5")

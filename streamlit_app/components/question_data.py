@@ -42,13 +42,11 @@ def get_A():
     'Content-Type': 'application/json',
   }
   response = requests.get(url, headers=headers)
-  print(response)
   return response
 
-@st.cache_data
 def show_B():
   ''' show loaded data '''
-  response = get_A()
+  response = get_B()
   res = None
   if response.status_code == 200:
     res = response.json()["setA"]
@@ -61,6 +59,7 @@ def show_B():
     df_a = pd.DataFrame(res)
     st.write(df_a)
 
+@st.cache_data
 def get_B():
   ''' get data from server '''
   url = base_url + '/questions/setB'
@@ -72,5 +71,4 @@ def get_B():
     'Content-Type': 'application/json',
   }
   response = requests.get(url, headers=headers)
-  print(response)
   return response
