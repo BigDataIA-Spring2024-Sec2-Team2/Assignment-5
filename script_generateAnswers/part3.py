@@ -6,7 +6,6 @@ from pinecone import Pinecone
 import os
 from dotenv import load_dotenv
 import pymongo
-from pymongo import MongoClient
 import certifi
 import csv
 import re
@@ -16,12 +15,10 @@ load_dotenv()
 
 def process_documents(setB, pinecone_setA, pinecone_question_namespace, collection_set_A):
     correct = 0
-    rows=[]
-    
-    for document in setB:
 
+    for document in setB:
+        data_to_insert = []
         question = document['question']
-        
         answer = (((document['answer']).split())[0])[0]
 
         embedded_question = openai.Embedding.create(
@@ -32,7 +29,6 @@ def process_documents(setB, pinecone_setA, pinecone_question_namespace, collecti
         found = pinecone_setA.query(vector=embedded_question, top_k=3, include_metadata=True, namespace="questions")
 
         context = ''
-
         for each in found['matches']:
             mongoId = ObjectId(each['id'])
             mongo_result = collection_set_A.find_one({"_id": mongoId})
@@ -50,7 +46,6 @@ def process_documents(setB, pinecone_setA, pinecone_question_namespace, collecti
 
             """
         
-
         query = f'''Based on this context 
         {context}
 
@@ -89,12 +84,17 @@ def process_documents(setB, pinecone_setA, pinecone_question_namespace, collecti
         else: 
             Match = 0
 
-        rows.append([question, explanation, option_id, answer, Match])
+        data_to_insert.append({
+            'Question': question,
+            'GPT Explanation': explanation,
+            'GPT Answer': option_id,
+            'KB Answer': answer,
+            'Match': Match
+        })
 
-    with open('Part3_report.csv', 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Question', 'GPT Explanation', 'GPT Answer', 'KB Answer', 'Match'])
-        writer.writerows(rows)
+    collection_part_3_report = collection_set_A.database.get_collection(os.getenv('collection_part_3_report'))
+    collection_part_3_report.insert_many(data_to_insert)
+
 
     return correct
 
@@ -106,7 +106,6 @@ def main():
 
     collection_set_A_name = os.getenv('collection_set_A') 
     collection_set_B_name = os.getenv('collection_set_B') 
-    collection_part_3_report = os.getenv('collection_part_3_report')
     key_pinecone_setA = os.getenv('key_pinecone_setA') 
     index_name_setA = os.getenv('index_name_setA')
     pinecone_question_namespace = os.getenv('pinecone_question_namespace')
@@ -117,19 +116,13 @@ def main():
 
     collection_set_A = db[collection_set_A_name]
     collection_set_B = db[collection_set_B_name]
-    collection_part_3_report = db[collection_part_3_report]
 
     pinecone = Pinecone(api_key=key_pinecone_setA)
-    pinecone_setA = pinecone.Index(name = index_name_setA)
-    
+    pinecone_setA = pinecone.Index(name=index_name_setA)
 
     all_documents_B = collection_set_B.find()
 
     correct = process_documents(all_documents_B, pinecone_setA, pinecone_question_namespace, collection_set_A)
     print("The number of questions that had the same answers: ",correct)
-
-    df = pd.read_csv("Part3_report.csv")   
-    data_dict = df.to_dict(orient='records')
-    collection_part_3_report.insert_many(data_dict)
 
 main()
