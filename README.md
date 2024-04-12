@@ -10,8 +10,13 @@
   
 
 ## Problem Statement 
+Build an intelligent applications for knowledge retrieval and Q/A tasks.
 
 ## Project Goals
+1. Creating knowledge summaries using OpenAI’s GPT
+2. Generating a knowledge base (Q/A) providing context
+3. Using a vector database to find and answer questions.
+4. Use the knowledge summaries from 1 to answer questions.
 
 ## Technologies Used
 [![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/)
