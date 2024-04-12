@@ -3,6 +3,12 @@
 ## Live application Links
 [![codelabs](https://img.shields.io/badge/codelabs-4285F4?style=for-the-badge&logo=codelabs&logoColor=white)](https://docs.google.com/document/d/1uM3pyBVNURT9fq-ySvNWs54Kkx8Pw9LZH0hw7yaW0CM/edit#heading=h.j0flkct7g8l6)
 
+- Airflow: https://34.139.115.254:8080
+- Authentication Service: https://34.23.189.28:8000
+- Fast API: https://34.23.189.28:8000
+- Streamlit Application: https://35.229.36.63:8051
+  
+
 ## Problem Statement 
 
 ## Project Goals
@@ -44,6 +50,6 @@ CodeLab - [Documentation]([https://docs.google.com/document/d/1YvvKu38ZeIrlWY-Pg
 
     Name | Contribution %| Contributions |
   --- |--- | --- |
-  Anshul Chaudhary  | % | |
-  Agash Uthayasuriyan | % | |
-  Narayani Arun Patil | % | |
+  Anshul Chaudhary  | 33.3% | Web scraping, airflow, streamlit, mongo, Pinecone |
+  Agash Uthayasuriyan | 33.3% | Openai, Pinecone, RAG |
+  Narayani Arun Patil | 33.3% | Question generation, Openai, mongo |
