@@ -11,17 +11,18 @@ import pandas as pd
 
 load_dotenv()
 
-def process_documents(all_documents, collection_los, los_pinecone, key, csv_writer):
+def process_documents(all_documents, collection_los, los_pinecone, key):
+    data = []
     correct = 0
     for document in all_documents:
         question = document['question']
 
-        if key ==0:
-          set = "A"
-          answer = (((document['answer']).split())[4])[0]
-        elif key ==1:
-          set = "B"
-          answer = (((document['answer']).split())[0])[0]
+        if key == 0:
+            set_name = "A"
+            answer = (((document['answer']).split())[4])[0]
+        elif key == 1:
+            set_name = "B"
+            answer = (((document['answer']).split())[0])[0]
 
         embedded_question = openai.Embedding.create(
             input=question, 
@@ -48,15 +49,13 @@ def process_documents(all_documents, collection_los, los_pinecone, key, csv_writ
         )
         gpt_response = response['choices'][0]['message']['content']
 
-        if gpt_response[0] == answer:
-            correct += 1
-            match = 1
-        else: 
-           match = 0
-        question = question.replace('\n', ' ')
-        csv_writer.writerow([set, question, gpt_response[0], answer, match])
+        match = 1 if gpt_response[0] == answer else 0
+        correct += match
 
-    return correct
+        question = question.replace('\n', ' ')
+        data.append({'Set': set_name, 'Question': question, 'GPT Answer': gpt_response[0], 'KB Answer': answer, 'Match': match})
+
+    return correct, data
 
 def main():
     key = os.getenv('GPT_key') 
@@ -84,19 +83,15 @@ def main():
     all_documents_A = collection_set_A.find()
     all_documents_B = collection_set_B.find()
 
-    with open('Part4_report.csv', 'w', newline='') as csvfile:
-        fieldnames = ['Set', 'Question', 'GPT Answer', 'KB Answer', 'Match']
-        writer = csv.writer(csvfile)
-        writer.writerow(fieldnames)
+    correct_A, data_A = process_documents(all_documents_A, collection_los, los_pinecone, 0)
+    correct_B, data_B = process_documents(all_documents_B, collection_los, los_pinecone, 1)
 
-        correct_A = process_documents(all_documents_A, collection_los, los_pinecone, 0, writer)
-        correct_B = process_documents(all_documents_B, collection_los, los_pinecone, 1, writer)
+    print("Correct answers for set A:", correct_A)
+    print("Correct answers for set B:", correct_B)
 
-        print("Correct answers for set A:", correct_A)
-        print("Correct answers for set B:", correct_B)
-
-        df = pd.read_csv("Part4_report.csv")   
-        data_dict = df.to_dict(orient='records')
-        collection_part_4_report.insert_many(data_dict)
+    all_data = data_A + data_B
+    
+    df = pd.DataFrame(all_data)
+    collection_part_4_report.insert_many(df.to_dict(orient='records'))
   
 main()
