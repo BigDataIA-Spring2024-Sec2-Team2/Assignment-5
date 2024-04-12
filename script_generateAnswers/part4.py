@@ -1,4 +1,3 @@
-import functions_framework
 import openai
 from pymongo import MongoClient
 from bson.objectid import ObjectId
@@ -6,19 +5,21 @@ from pinecone import Pinecone
 import os
 from dotenv import load_dotenv
 import pymongo
-from pymongo import MongoClient
 import certifi
+import csv
 
 load_dotenv()
 
-def process_documents(all_documents, collection_los, los_pinecone, key):
+def process_documents(all_documents, collection_los, los_pinecone, key, csv_writer):
     correct = 0
     for document in all_documents:
         question = document['question']
 
         if key ==0:
+          set = "A"
           answer = (((document['answer']).split())[4])[0]
         elif key ==1:
+          set = "B"
           answer = (((document['answer']).split())[0])[0]
 
         embedded_question = openai.Embedding.create(
@@ -45,8 +46,14 @@ def process_documents(all_documents, collection_los, los_pinecone, key):
             temperature=0.1
         )
         gpt_response = response['choices'][0]['message']['content']
+
         if gpt_response[0] == answer:
             correct += 1
+            match = 1
+        else: 
+           match = 0
+        question = question.replace('\n', ' ')
+        csv_writer.writerow([set, question, gpt_response[0], answer, match])
 
     return correct
 
@@ -74,10 +81,19 @@ def main():
     all_documents_A = collection_set_A.find()
     all_documents_B = collection_set_B.find()
 
-    correct_A = process_documents(all_documents_A, collection_los, los_pinecone, 0)
-    correct_B = process_documents(all_documents_B, collection_los, los_pinecone, 1)
+    with open('Part4_report.csv', 'w', newline='') as csvfile:
+        fieldnames = ['Set', 'Question', 'GPT Answer', 'KB Answer', 'Match']
+        writer = csv.writer(csvfile)
+        writer.writerow(fieldnames)
 
-    print("Correct answers for set A:", correct_A)
-    print("Correct answers for set B:", correct_B)
+        correct_A = process_documents(all_documents_A, collection_los, los_pinecone, 0, writer)
+        correct_B = process_documents(all_documents_B, collection_los, los_pinecone, 1, writer)
+
+        total_correct = correct_A + correct_B
+
+        writer.writerow(["", "Total Correct", "", "", total_correct])
+
+        print("Correct answers for set A:", correct_A)
+        print("Correct answers for set B:", correct_B)
   
 main()
