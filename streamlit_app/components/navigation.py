@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
 from components.data_collection import data_collection
+from components.question_data import questions
 
 def tabs():
   options = ["Collection", "Question", "Answer", "Knowledge"]
@@ -19,7 +20,7 @@ def tabs():
   if st.session_state["nav_menu"] == "Collection" or st.session_state["nav_menu"] == None:
     data_collection()
   elif st.session_state["nav_menu"] == "Question":
-    st.write("2")
+    questions()
   elif st.session_state["nav_menu"] == "Answer":
     st.write("3")
   elif st.session_state["nav_menu"] == "Knowledge":
