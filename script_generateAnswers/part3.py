@@ -95,6 +95,7 @@ def process_documents(setB, pinecone_setA, pinecone_question_namespace, collecti
     collection_part_3_report = collection_set_A.database.get_collection(os.getenv('collection_part_3_report'))
     collection_part_3_report.insert_many(data_to_insert)
 
+
     return correct
 
 def main():

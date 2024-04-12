@@ -68,6 +68,7 @@ def main():
     key_pinecone = os.getenv('key_pinecone') 
     index_name = os.getenv('index_name')
 
+
     openai.api_key = key
     client = pymongo.MongoClient(mongo_url,tlsCAFile=certifi.where())
     db = client[db_name]
@@ -90,7 +91,7 @@ def main():
     print("Correct answers for set B:", correct_B)
 
     all_data = data_A + data_B
-    
+
     df = pd.DataFrame(all_data)
     collection_part_4_report.insert_many(df.to_dict(orient='records'))
   
