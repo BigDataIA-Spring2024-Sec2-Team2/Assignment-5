@@ -10,6 +10,7 @@ from pymongo import MongoClient
 import certifi
 import csv
 import re
+import pandas as pd
 
 load_dotenv()
 
@@ -94,9 +95,6 @@ def process_documents(setB, pinecone_setA, pinecone_question_namespace, collecti
         writer = csv.writer(file)
         writer.writerow(['Question', 'GPT Explanation', 'GPT Answer', 'KB Answer', 'Match'])
         writer.writerows(rows)
-        writer.writerow(["","","","",""])
-        writer.writerow(["","","","",""])
-        writer.writerow(["","Total Correct","","",correct])
 
     return correct
 
@@ -108,6 +106,7 @@ def main():
 
     collection_set_A_name = os.getenv('collection_set_A') 
     collection_set_B_name = os.getenv('collection_set_B') 
+    collection_part_3_report = os.getenv('collection_part_3_report')
     key_pinecone_setA = os.getenv('key_pinecone_setA') 
     index_name_setA = os.getenv('index_name_setA')
     pinecone_question_namespace = os.getenv('pinecone_question_namespace')
@@ -118,6 +117,7 @@ def main():
 
     collection_set_A = db[collection_set_A_name]
     collection_set_B = db[collection_set_B_name]
+    collection_part_3_report = db[collection_part_3_report]
 
     pinecone = Pinecone(api_key=key_pinecone_setA)
     pinecone_setA = pinecone.Index(name = index_name_setA)
@@ -127,5 +127,9 @@ def main():
 
     correct = process_documents(all_documents_B, pinecone_setA, pinecone_question_namespace, collection_set_A)
     print("The number of questions that had the same answers: ",correct)
+
+    df = pd.read_csv("Part3_report.csv")   
+    data_dict = df.to_dict(orient='records')
+    collection_part_3_report.insert_many(data_dict)
 
 main()

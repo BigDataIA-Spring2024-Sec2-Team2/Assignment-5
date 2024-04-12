@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import pymongo
 import certifi
 import csv
+import pandas as pd
 
 load_dotenv()
 
@@ -64,6 +65,7 @@ def main():
     collection_los_name = os.getenv('collection_los') 
     collection_set_A_name = os.getenv('collection_set_A') 
     collection_set_B_name = os.getenv('collection_set_B') 
+    collection_part_4_report = os.getenv('collection_part_4_report')
     key_pinecone = os.getenv('key_pinecone') 
     index_name = os.getenv('index_name')
 
@@ -74,6 +76,7 @@ def main():
     collection_set_A = db[collection_set_A_name]
     collection_set_B = db[collection_set_B_name]
     collection_los = db[collection_los_name]
+    collection_part_4_report = db[collection_part_4_report]
 
     pinecone = Pinecone(api_key=key_pinecone)
     los_pinecone = pinecone.Index(name=index_name)
@@ -89,11 +92,11 @@ def main():
         correct_A = process_documents(all_documents_A, collection_los, los_pinecone, 0, writer)
         correct_B = process_documents(all_documents_B, collection_los, los_pinecone, 1, writer)
 
-        total_correct = correct_A + correct_B
-
-        writer.writerow(["", "Total Correct", "", "", total_correct])
-
         print("Correct answers for set A:", correct_A)
         print("Correct answers for set B:", correct_B)
+
+        df = pd.read_csv("Part4_report.csv")   
+        data_dict = df.to_dict(orient='records')
+        collection_part_4_report.insert_many(data_dict)
   
 main()
