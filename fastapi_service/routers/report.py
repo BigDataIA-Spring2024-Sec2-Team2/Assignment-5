@@ -17,7 +17,7 @@ ALGORITHM = config['auth-api']['ALGORITHM']
 mongo_url = config['MongoDB']['mongo_url']
 db_name = config['MongoDB']['db_name']
 collection_name_part3 = config['MongoDB']['collection_name_part3']
-collection_name_part4 = config['MongoDB']['collection_name_part3']
+collection_name_part4 = config['MongoDB']['collection_name_part4']
 
 
 @router.get('/part3')

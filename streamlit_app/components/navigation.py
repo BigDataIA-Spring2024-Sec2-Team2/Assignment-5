@@ -3,6 +3,7 @@ from streamlit_option_menu import option_menu
 from components.data_collection import data_collection
 from components.question_data import questions
 from components.part3_report import part3report
+from components.part4_report import part4report
 def tabs():
   options = ["Collection", "Question", "Part3", "Part4"]
   icons = ['cloud-upload-fill','gear-fill', 'clipboard-data-fill', 'clipboard-data-fill'] 
@@ -24,4 +25,4 @@ def tabs():
   elif st.session_state["nav_menu"] == "Part3":
     part3report()
   elif st.session_state["nav_menu"] == "Part4":
-    st.write("4")
+    part4report()
