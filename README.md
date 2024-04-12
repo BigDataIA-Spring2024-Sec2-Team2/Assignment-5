@@ -124,6 +124,6 @@ script_generateQuestion
 
     Name | Contribution %| Contributions |
   --- |--- | --- |
-  Anshul Chaudhary  | 33.3% | Web scraping, airflow, streamlit, mongo, Pinecone, GCP |
+  Anshul Chaudhary  | 33.3% | Web scraping, markdown genreation & embedding, airflow, streamlit, mongo, Pinecone, GCP, FastAPI, Hosting |
   Agash Uthayasuriyan | 33.3% | Openai, Pinecone, RAG, mongo, report generation |
   Narayani Arun Patil | 33.3% | Question generation, Openai, mongo, GCP Bucket, PDF parsing |
