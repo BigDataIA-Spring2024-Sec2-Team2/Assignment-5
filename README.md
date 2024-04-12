@@ -3,11 +3,9 @@
 ## Live application Links
 [![codelabs](https://img.shields.io/badge/codelabs-4285F4?style=for-the-badge&logo=codelabs&logoColor=white)](https://docs.google.com/document/d/1uM3pyBVNURT9fq-ySvNWs54Kkx8Pw9LZH0hw7yaW0CM/edit#heading=h.j0flkct7g8l6)
 
-- Airflow: https://34.139.115.254:8080
-- Authentication Service: https://34.23.189.28:8000
-- Fast API: https://34.23.189.28:8000
-- Streamlit Application: https://35.229.36.63:8051
-  
+- Airflow: http://35.188.172.153:8080
+- Fast API: http://35.224.202.134:8001
+- Streamlit Application: http://35.222.74.248:8501
 
 ## Problem Statement 
 Build an intelligent applications for knowledge retrieval and Q/A tasks.
