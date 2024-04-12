@@ -50,6 +50,6 @@ CodeLab - [Documentation]([https://docs.google.com/document/d/1YvvKu38ZeIrlWY-Pg
 
     Name | Contribution %| Contributions |
   --- |--- | --- |
-  Anshul Chaudhary  | 33.3% | Web scraping, airflow, streamlit, mongo, Pinecone |
-  Agash Uthayasuriyan | 33.3% | Openai, Pinecone, RAG |
-  Narayani Arun Patil | 33.3% | Question generation, Openai, mongo |
+  Anshul Chaudhary  | 33.3% | Web scraping, airflow, streamlit, mongo, Pinecone, GCP |
+  Agash Uthayasuriyan | 33.3% | Openai, Pinecone, RAG, mongo, report generation |
+  Narayani Arun Patil | 33.3% | Question generation, Openai, mongo, GCP Bucket |
